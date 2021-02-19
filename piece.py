@@ -1,4 +1,5 @@
 class Piece:
+
     def __init__(self, position, board, team):
         self.position = position
         self.isDead = False
@@ -44,6 +45,7 @@ class Bishop(Piece):
         super().__init__(position, board, team)
         self.name = 'B'
 
+#Daniel
 class Rook(Piece):
     def __init__(self, position, board, team):
         super().__init__(position, board, team)
