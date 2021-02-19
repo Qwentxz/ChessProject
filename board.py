@@ -4,10 +4,7 @@ from piece import *
 
 class Board:
     def __init__(self):
-        self.board = np.array([[None]*8]*8, Piece)
-
-    def move(self):
-        raise NotImplementedError("Subclass must implement abstract method")
+        self.board = np.array([[None] * 8] * 8, Piece)
 
     def init(self):
         for i in range(8):
@@ -29,3 +26,8 @@ class Board:
         self.board[7][4] = King([7, 4], self.board, 0)
         self.board[0][3] = Queen([0, 3], self.board, 1)
         self.board[7][3] = Queen([7, 3], self.board, 0)
+        return self
+
+    def show(self):
+        for line in self.board:
+            print([piece.name + ('b' if piece.team == 0 else 'w') if piece is not None else "__" for piece in line])

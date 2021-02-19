@@ -36,9 +36,11 @@ class Knight(Piece):                      #Quentin
         self.name = 'N'
 
     def move(self):
-        res = []
-        for i in range(4):
-            if
+        res=[]
+        x = self.position[0]
+        y = self.position[1]
+        return [[x + i, x + j] for i in (-2, -1, 1, 2) for j in (-2, -1, 1, 2) if i != 2 and j != 2 and 0 <= x + i < 8 and 0 <= x + j < 8]
+
 
 class Bishop(Piece):
     def __init__(self, position, board, team):
