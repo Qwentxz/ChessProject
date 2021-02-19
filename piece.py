@@ -45,19 +45,46 @@ class Bishop(Piece):
         super().__init__(position, board, team)
         self.name = 'B'
 
+    def move(self):
+        x = self.position[0]
+        y = self.position[1]
+        return [[x + i, y + i] for i in range(1, 8 - x)] + \
+               [[x - i, y - i] for i in range(1, x + 1)] + \
+               [[x + i, y + i] for i in range(1, 8 - y)] + \
+               [[x - i, y - i] for i in range(1, y + 1)]
+
+
 #Daniel
 class Rook(Piece):
     def __init__(self, position, board, team):
         super().__init__(position, board, team)
         self.name = 'R'
 
+    def move(self):
+        x = self.position[0]
+        y = self.position[1]
+        return [[x+i, y] for i in range(1, 8-x)] + \
+               [[x-i, y] for i in range(1, x+1)] + \
+               [[x, y+i] for i in range(1, 8-y)] + \
+               [[x, y-i] for i in range(1, y+1)]
+
 class King(Piece):
     def __init__(self, position, board, team):
         super().__init__(position, board, team)
         self.name = 'K'
 
+    def move(self):
+        x = self.position[0]
+        y = self.position[1]
+        return [[x+i, y] for i in (-1,1)] + \
+               [[x, y+i] for i in (-1,1)] + \
+               [[x+i, y+j] for i in (-1,1) for j in (-1,1)]
+
 class Queen(Piece):
     def __init__(self, position, board, team):
         super().__init__(position, board, team)
         self.name = 'Q'
+
+    def move(self):
+        return Rook.move() + Bishop.move()
 
