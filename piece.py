@@ -25,8 +25,16 @@ class Piece:
         self.board[self.position] = None
         self.position = position
         #self.isEndangered = self.willBeEaten(position)      #check if eaten on new position [FOR LATER]
-        if self.board.who(position) is not None:
-            self.board.who(position).isDead = True
+        if self.board[position] is not None:
+            self.board[position].isDead = True
+        self.board[position] = self
+
+    def testmove(self,position):
+        self.name='%'
+        self.position = position
+        # self.isEndangered = self.willBeEaten(position)      #check if eaten on new position [FOR LATER]
+        if self.board[position] is not None:
+            self.board[position].isDead = True
         self.board[position] = self
 
 class Pawn(Piece):
@@ -34,6 +42,8 @@ class Pawn(Piece):
         super().__init__(position, board, team)
         self.name = 'P'
 
+    def moves(self,turn):
+        pass
 
 class Knight(Piece):
     def __init__(self, position, board, team):
@@ -44,7 +54,7 @@ class Knight(Piece):
         x = self.position[0]
         y = self.position[1]
         return [(x + i, y + j) for i in (-2, -1, 1, 2) for j in (-2, -1, 1, 2) if
-                i != 2 and j != 2 and 0 <= x + i < 8 and 0 <= y + j < 8]
+                i != j and i != -j and 0 <= x + i < 8 and 0 <= y + j < 8]
 
 
 class Bishop(Piece):
@@ -82,9 +92,9 @@ class King(Piece):
     def moves(self):
         x = self.position[0]
         y = self.position[1]
-        return [(x + i, y) for i in (-1, 1)] + \
-               [(x, y + i) for i in (-1, 1)] + \
-               [(x + i, y + j) for i in (-1, 1) for j in (-1, 1)]
+        return [(x + i, y) for i in (-1, 1) if 8 > x + i >= 0 and 8 > y >= 0] + \
+               [(x, y + i) for i in (-1, 1) if 8 > x >= 0 and 8 > y + i >= 0] + \
+               [(x + i, y + j) for i in (-1, 1) for j in (-1, 1) if 8 > x + i >= 0 and 8 > y + i >= 0]
 
 
 class Queen(Piece):
@@ -93,4 +103,4 @@ class Queen(Piece):
         self.name = 'Q'
 
     def moves(self):
-        return Rook.move() + Bishop.move()
+        return Rook.moves(self) + Bishop.moves(self)
