@@ -29,7 +29,7 @@ class Pawn(Piece):
         super().__init__(position, board, team)
         self.name = 'P'
 
-class Knight(Piece):
+class Knight(Piece):                      #Quentin
     def __init__(self, position, board, team):
         super().__init__(position, board, team)
         self.name = 'N'
