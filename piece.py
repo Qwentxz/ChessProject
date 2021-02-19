@@ -8,16 +8,10 @@ class Piece:
         self.isEndangered = False
         self.board = board
         self.team = team
-        self.eat=[]
+        self.eat = []
 
     def moves(self):
         raise NotImplementedError("Subclass must implement abstract method")
-
-   # def ValidMoves(self, moves):           #not rly classe :( but override
-   #     for move in moves:
-   #         if
-   #    return moves
-
 
     def isValidMove(self):
         raise NotImplementedError("Subclass must implement abstract method")
@@ -57,6 +51,7 @@ class Knight(Piece):
     def __init__(self, position, board, team):
         super().__init__(position, board, team)
         self.name = 'N'
+        self.directions = [(2, 1), (2, -1), (-2, 1), (-2, -1), (1, 2), (-1, 2), (-1, -2), (1, -2)]
 
     def moves(self):
         self.eat = []

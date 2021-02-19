@@ -12,7 +12,7 @@ if __name__ == '__main__':
     b=Board()
     b.init()
     #piece test
-    testpiece=b.board[0,1]
+    testpiece=b.board[0,3]
 
     # change board
     b.board[1][3] = None
