@@ -1,7 +1,9 @@
+import numpy
+
 class Piece:
 
     def __init__(self, position, board, team):
-        self.position = position
+        self.position = position        #tuple
         self.isDead = False
         self.isEndangered = False
         self.board = board
@@ -20,12 +22,12 @@ class Piece:
         raise NotImplementedError("Subclass must implement abstract method")
 
     def update(self, position):                     #updating board as well
+        self.board[self.position] = None
         self.position = position
-        self.isEndangered = self.willBeEaten(position)      #check if eaten on new position [FOR LATER]
+        #self.isEndangered = self.willBeEaten(position)      #check if eaten on new position [FOR LATER]
         if self.board.who(position) is not None:
             self.board.who(position).isDead = True
-        self.board.[position[0]][]
-
+        self.board[position] = self
 
 class Pawn(Piece):
     def __init__(self, position, board, team):
