@@ -48,10 +48,10 @@ class Bishop(Piece):
     def move(self):
         x = self.position[0]
         y = self.position[1]
-        return [[x + i, y + i] for i in range(1, 8 - x)] + \
-               [[x - i, y - i] for i in range(1, x + 1)] + \
-               [[x + i, y + i] for i in range(1, 8 - y)] + \
-               [[x - i, y - i] for i in range(1, y + 1)]
+        return [[x + i, y + i] for i in range(1, 8) if 8>x+i>=0 and 8>y+i>=0] + \
+               [[x - i, y - i] for i in range(1, 8) if 8>x-i>=0 and 8>y-i>=0] + \
+               [[x + i, y - i] for i in range(1, 8) if 8>x+i>=0 and 8>y-i>=0] + \
+               [[x - i, y + i] for i in range(1, 8) if 8>x-i>=0 and 8>y+i>=0]
 
 
 #Daniel
