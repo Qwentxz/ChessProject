@@ -8,14 +8,22 @@ def print_hi(name):
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
+    #init board
     b=Board()
-    b.init().show()
-    testpiece=b.board[7,0]
+    b.init()
+    #piece test
+    testpiece=b.board[0,1]
+
+    # change board
+    b.board[1][3] = None
+    b.board[1][2] = None
+    b.show()
 
     print("\n")
 
     print(testpiece.moves())
 
+    #move possible
     for move in testpiece.moves():
         testpiece.testmove(move)
     b.show()
