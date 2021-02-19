@@ -19,11 +19,12 @@ class Piece:
     def willBeEaten(self, newPos):
         raise NotImplementedError("Subclass must implement abstract method")
 
-    def update(self, position):
+    def update(self, position):                     #updating board as well
         self.position = position
-        self.isEndangered = self.willBeEaten(position)
-        if self.board.someone(position) is not None:
-            self.board.someone(position).isDead = True
+        self.isEndangered = self.willBeEaten(position)      #check if eaten on new position [FOR LATER]
+        if self.board.who(position) is not None:
+            self.board.who(position).isDead = True
+        self.board.[position[0]][]
 
 
 class Pawn(Piece):
@@ -32,7 +33,7 @@ class Pawn(Piece):
         self.name = 'P'
 
 
-class Knight(Piece):  # Quentin
+class Knight(Piece):
     def __init__(self, position, board, team):
         super().__init__(position, board, team)
         self.name = 'N'
@@ -57,8 +58,6 @@ class Bishop(Piece):
                [[x + i, y - i] for i in range(1, 8) if 8 > x + i >= 0 and 8 > y - i >= 0] + \
                [[x - i, y + i] for i in range(1, 8) if 8 > x - i >= 0 and 8 > y + i >= 0]
 
-
-# Daniel
 class Rook(Piece):
     def __init__(self, position, board, team):
         super().__init__(position, board, team)

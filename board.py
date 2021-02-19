@@ -31,3 +31,6 @@ class Board:
     def show(self):
         for line in self.board:
             print([piece.name + ('b' if piece.team == 0 else 'w') if piece is not None else "__" for piece in line])
+
+    def who(self,position):
+        return self.board[position[0]][position[1]]
