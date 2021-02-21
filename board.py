@@ -5,6 +5,7 @@ from piece import *
 class Board:
     def __init__(self):
         self.board = np.array([[None] * 8] * 8, Piece)
+        self.moves = np.array([[None]*8]*8, list(Piece))
 
     def init(self):
         for i in range(8):
