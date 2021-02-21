@@ -21,11 +21,15 @@ if __name__ == '__main__':
 
     print("\n")
 
-    print(testpiece.moves())
+    print()
 
     #move possible
-    for move in testpiece.moves():
-        testpiece.testmove(move)
+    testpiece.updateDecisions()
+    print(testpiece.decisions)
+    for i in range(8):
+        for j in range(8):
+            if testpiece.decisions[(i, j)]:
+                testpiece.testmove((i, j))
     b.show()
 
 

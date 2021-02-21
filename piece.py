@@ -1,4 +1,4 @@
-import numpy
+import numpy as np
 
 class Piece:
 
@@ -8,36 +8,48 @@ class Piece:
         self.isEndangered = False
         self.board = board
         self.team = team
-        self.eat = []
+        self.decisions = np.array([[0] * 8] * 8, Piece)
+        """
+        1 = peut bouger
+        0 = peut pas bouger
+        2 = peut manger
+        -1 = va se faire manger
+        """
         self.directions = []
 
-    def moves(self, continuous:bool = True):
-        self.eat = []   # reset canEat
-        moves = []
+    def resetDecisions(self):
+        self.decisions = np.array([[0] * 8] * 8, Piece)
+        self.isEndangered = False
+
+    def updateDecisions(self, continuous:bool = True):
+        self.resetDecisions()
         x0, y0 = self.position
         for direction in self.directions:   #pour chaque direction
             movx, movy = direction
             while 8 > self.position[0] + movx >= 0 and 8 > self.position[1] + movy >= 0:    #on avance tant que ya pas de pièce
                 x, y = self.position[0], self.position[1]
                 newposition = (x + movx, y + movy)
-
-                if self.board[newposition] is None:     #then break when
-                    self.position = newposition
-                    moves.append(newposition)      # meeting an obstacle
-                    if self.board.moves[newposition] is not None:
-                        self.board.moves[newposition].append(self)
-                    else:
-                        self.board.moves[newposition] = self
-                elif self.board[newposition].team != self.team:
-                    self.eat.append(self.board[newposition])       #(either we can eat or not)
-                    moves.append(newposition)
+                newpiece = self.board.board[newposition]
+                if newpiece is None:                                     #then break when
+                    for ennemy in self.board.teamsAlive[not self.team]:
+                        self.position = newposition
+                        if ennemy.decisions[newposition] != 0:              #if can move here
+                            self.decisions[newposition] = -1
+                        else:
+                            self.decisions[newposition] = 1
+                        #if self.board.moves[newposition] is not None:           #Daniel
+                        #    self.board.moves[newposition].append(self)
+                        #else:
+                        #    self.board.moves[newposition] = self
+                elif newpiece.team != self.team:
+                    self.decisions[newposition] = 2             #if can eat
+                    newpiece.isEndangered = True                #ennemy is endangered
                     break
                 else:
                     break
-                if not continuous or self in self.board.moves[newposition]:
+                if not continuous:
                     break
             self.position = (x0, y0)
-        return moves
 
     def remove_moves(self, newpos):
         raise NotImplementedError("Subclass must implement abstract method")
@@ -49,28 +61,33 @@ class Piece:
         raise NotImplementedError("Subclass must implement abstract method")
 
     def update(self, position):                     #updating board as well
-        self.board[self.position] = None
+        self.board.board[self.position] = None
         self.position = position
         #self.isEndangered = self.willBeEaten(position)      #check if eaten on new position [FOR LATER]
-        if self.board[position] is not None:
-            self.board[position].isDead = True
-        self.board[position] = self
+        if self.board.board[position] is not None:
+            self.board.board[position].isDead = True
+        self.board.board[position] = self
+
+    def eat(self, position):
+        self.board.board[position].isDead = True
 
     def testmove(self, position):
         self.name='%'
         self.position = position
         # self.isEndangered = self.willBeEaten(position)      #check if eaten on new position [FOR LATER]
-        if self.board[position] is not None:
-            self.board[position].isDead = True
-        self.board[position] = self
+        if self.decisions[position] != 0:
+            if self.decisions[position] == 2:
+                self.eat(position)
+            self.board.board[position] = self
+        else:
+            print("Zebi réfléchis")
 
 class Pawn(Piece):
     def __init__(self, position, board, team):
         super().__init__(position, board, team)
         self.name = 'P'
-        self.moves = self.moves()
 
-    def moves(self):
+    def updateDecisions(self):
         pass
 
     #Override
@@ -82,13 +99,12 @@ class Knight(Piece):
         super().__init__(position, board, team)
         self.name = 'N'
         self.directions = [(2, 1), (2, -1), (-2, 1), (-2, -1), (1, 2), (-1, 2), (-1, -2), (1, -2)]
-        self.moves = self.moves(False)
 
-    def moves(self):
-        return super(Knight, self).moves(False)
+    def updateDecisions(self):
+        return super(Knight, self).updateDecisions(False)
 
     def remove_moves(self, newpos):
-        L = self.board.moves
+        L = self.board.updateDecisions
         for i in range(len(L)):
             for j in range(len(L[i])):
                 try:
@@ -105,10 +121,9 @@ class Bishop(Piece):
         super().__init__(position, board, team)
         self.name = 'B'
         self.directions = [(1, 1), (1, -1), (-1, 1), (-1, -1)]
-        self.moves = self.moves()
 
-    def moves(self):
-        return super(Bishop, self).moves()
+    def updateDecisions(self):
+        return super(Bishop, self).updateDecisions()
 
     def remove_moves(self, newpos):
         new, old = newpos, self.position
@@ -121,10 +136,9 @@ class Rook(Piece):
         super().__init__(position, board, team)
         self.name = 'R'
         self.directions = [(0, 1), (0, -1), (1, 0), (-1, 0)]
-        self.moves = self.moves()
 
-    def moves(self):
-        return super(Rook, self).moves()
+    def updateDecisions(self):
+        return super(Rook, self).updateDecisions()
 
     def remove_moves(self):
         pass
@@ -140,9 +154,8 @@ class King(Piece):
         super().__init__(position, board, team)
         self.name = 'K'
         self.directions = [(-1,-1)]
-        self.moves = self.moves(False)
 
-    def moves(self):
+    def updateDecisions(self):
         x = self.position[0]
         y = self.position[1]
         return [(x + i, y) for i in (-1, 1) if 8 > x + i >= 0 and 8 > y >= 0] + \
@@ -155,7 +168,6 @@ class Queen(Piece):
         super().__init__(position, board, team)
         self.name = 'Q'
         self.directions = [(0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)]
-        self.moves = self.moves()
 
-    def moves(self):
-        return super(Queen, self).moves()
+    def updateDecisions(self):
+        return super(Queen, self).updateDecisions()
