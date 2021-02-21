@@ -8,7 +8,7 @@ class Piece:
         self.isEndangered = False
         self.board = board
         self.team = team
-        self.eat = []
+        self.decision = [[]]
         self.directions = []
 
     def moves(self, continuous:bool = True):
@@ -34,6 +34,8 @@ class Piece:
                     break
             self.position = (x0, y0)
         return moves
+
+
 
     def isValidMove(self):
         raise NotImplementedError("Subclass must implement abstract method")
@@ -61,6 +63,7 @@ class Pawn(Piece):
     def __init__(self, position, board, team):
         super().__init__(position, board, team)
         self.name = 'P'
+        self.moves = self.moves()
 
     def moves(self,turn):
         pass
@@ -74,6 +77,7 @@ class Knight(Piece):
         super().__init__(position, board, team)
         self.name = 'N'
         self.directions = [(2, 1), (2, -1), (-2, 1), (-2, -1), (1, 2), (-1, 2), (-1, -2), (1, -2)]
+        self.moves = self.moves(False)
 
     def moves(self):
         return super(Knight, self).moves(False)
@@ -87,6 +91,7 @@ class Bishop(Piece):
         super().__init__(position, board, team)
         self.name = 'B'
         self.directions = [(1, 1), (1, -1), (-1, 1), (-1, -1)]
+        self.moves = self.moves()
 
     def moves(self):
         return super(Bishop, self).moves()
@@ -96,6 +101,7 @@ class Rook(Piece):
         super().__init__(position, board, team)
         self.name = 'R'
         self.directions = [(0, 1), (0, -1), (1, 0), (-1, 0)]
+        self.moves = self.moves()
 
     def moves(self):
         return super(Rook, self).moves()
@@ -111,6 +117,7 @@ class King(Piece):
         super().__init__(position, board, team)
         self.name = 'K'
         self.directions = [(-1,-1)]
+        self.moves = self.moves(False)
 
     def moves(self):
         x = self.position[0]
@@ -125,6 +132,7 @@ class Queen(Piece):
         super().__init__(position, board, team)
         self.name = 'Q'
         self.directions = [(0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)]
+        self.moves = self.moves()
 
     def moves(self):
         return super(Queen, self).moves()
