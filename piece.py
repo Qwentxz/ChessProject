@@ -24,16 +24,23 @@ class Piece:
                 if self.board[newposition] is None:     #then break when
                     self.position = newposition
                     moves.append(newposition)      # meeting an obstacle
+                    if self.board.moves[newposition] is not None:
+                        self.board.moves[newposition].append(self)
+                    else:
+                        self.board.moves[newposition] = self
                 elif self.board[newposition].team != self.team:
                     self.eat.append(self.board[newposition])       #(either we can eat or not)
                     moves.append(newposition)
                     break
                 else:
                     break
-                if not continuous:
+                if not continuous or self in self.board.moves[newposition]:
                     break
             self.position = (x0, y0)
         return moves
+
+    def remove_moves(self, newpos):
+        raise NotImplementedError("Subclass must implement abstract method")
 
     def isValidMove(self):
         raise NotImplementedError("Subclass must implement abstract method")
@@ -62,7 +69,7 @@ class Pawn(Piece):
         super().__init__(position, board, team)
         self.name = 'P'
 
-    def moves(self,turn):
+    def moves(self):
         pass
 
     #Override
@@ -78,6 +85,15 @@ class Knight(Piece):
     def moves(self):
         return super(Knight, self).moves(False)
 
+    def remove_moves(self, newpos):
+        L = self.board.moves
+        for i in range(len(L)):
+            for j in range(len(L[i])):
+                try:
+                    L[i][j].remove(self)
+                except:
+                    pass
+
     #Override
     def ValidMoves(self):
         pass
@@ -91,6 +107,12 @@ class Bishop(Piece):
     def moves(self):
         return super(Bishop, self).moves()
 
+    def remove_moves(self, newpos):
+        new, old = newpos, self.position
+        delta = (new[0]-old[0], new[1]-old[1])
+        if delta[0]*delta[1] > 0:
+            directions = [(1, -1), (-1, 1)]
+
 class Rook(Piece):
     def __init__(self, position, board, team):
         super().__init__(position, board, team)
@@ -99,6 +121,9 @@ class Rook(Piece):
 
     def moves(self):
         return super(Rook, self).moves()
+
+    def remove_moves(self):
+        pass
 
     #[(x + i, y) for i in range(1, 8 - x)] + \
      #          [(x - i, y) for i in range(1, x + 1)] + \
