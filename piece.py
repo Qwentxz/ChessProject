@@ -102,7 +102,7 @@ class Bishop(Piece):
     def __init__(self, position, board, team):
         super().__init__(position, board, team)
         self.name = 'B'
-        self.directions = [(1,1),(1,-1),(-1,1),(-1,-1)]
+        self.directions = [(1, 1), (1, -1), (-1, 1), (-1, -1)]
 
     def moves(self):
         return super(Bishop, self).moves()
